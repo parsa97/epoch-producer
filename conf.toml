@@ -1,0 +1,7 @@
+kafka_output_workers = 20
+kafka_brokers = ["localhost:9092"]
+kafka_flush_time_ms = 0
+kafka_topic = "test"
+kafka_batch_size = 0
+kafka_flush_time = 0
+loglevel = "debug"

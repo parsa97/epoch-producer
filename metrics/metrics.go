@@ -32,7 +32,7 @@ func Exporter() error {
 	http.Handle(metricsPath, promhttp.Handler())
 	err := http.ListenAndServe(":"+listernPort, nil)
 	if err != nil {
-		log.Error(nil)
+		log.Error(err)
 	}
 	return err
 }

@@ -17,7 +17,7 @@ var ProducedMessageCounter = prometheus.NewCounterVec(
 	[]string{"partition", "topic"},
 )
 
-func Exporter() {
+func Exporter() error {
 	listernPort, metricsPath := exporterConfig()
 	prometheus.MustRegister(ProducedMessageCounter)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -30,5 +30,9 @@ func Exporter() {
 `, metricsPath)))
 	})
 	http.Handle(metricsPath, promhttp.Handler())
-	log.Error(http.ListenAndServe(":"+listernPort, nil))
+	err := http.ListenAndServe(":"+listernPort, nil)
+	if err != nil {
+		log.Error(nil)
+	}
+	return err
 }

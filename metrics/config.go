@@ -3,7 +3,7 @@ package metrics
 import "os"
 
 func exporterConfig() (listenPort string, metricsPath string) {
-	listenPort = GetEnv("LISTEN_PORT", "8090")
+	listenPort = GetEnv("LISTEN_PORT", "8080")
 	metricsPath = GetEnv("METRICS_PATH", "/metrics")
 	return listenPort, metricsPath
 }

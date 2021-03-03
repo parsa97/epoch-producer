@@ -9,6 +9,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const exporterTemplate = `<html>
+<head><title>Producer Exporter</title></head>
+<body>
+<p><a href= %s >Metrics</a></p>
+</body>
+</html>
+`
+
 var ProducedMessageCounter = prometheus.NewCounterVec(
 	prometheus.CounterOpts{
 		Name: "produced_message_total",
@@ -18,16 +26,11 @@ var ProducedMessageCounter = prometheus.NewCounterVec(
 )
 
 func Exporter() error {
+	log.Info("Server Start Exporter")
 	listernPort, metricsPath := exporterConfig()
 	prometheus.MustRegister(ProducedMessageCounter)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`<html>
-<head><title>Producer Exporter</title></head>
-<body>
-<p><a href= %s >Metrics</a></p>
-</body>
-</html>
-`, metricsPath)))
+		w.Write([]byte(fmt.Sprintf(exporterTemplate, metricsPath)))
 	})
 	http.Handle(metricsPath, promhttp.Handler())
 	err := http.ListenAndServe(":"+listernPort, nil)

@@ -14,7 +14,9 @@ func newProducer() (sarama.SyncProducer, error) {
 	config := sarama.NewConfig()
 	var brokers []string
 	brokers = []string{"localhost:9092"}
-
+	config.Metadata.Retry.Max = 1
+	config.Metadata.Retry.Backoff = (10 * time.Second)
+	config.Metadata.RefreshFrequency = (15 * time.Minute)
 	config.Producer.RequiredAcks = requiredAcks()
 	if value, ok := os.LookupEnv("PRODUCER_MAX_MESSAGE_BYTES"); ok {
 		valuei, err := strconv.Atoi(value)

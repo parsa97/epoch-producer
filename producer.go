@@ -19,7 +19,7 @@ func init() {
 }
 
 func main() {
-	topic := "epoch"
+	topic := "input"
 	if value, ok := os.LookupEnv("TOPIC"); ok {
 		topic = value
 	}
@@ -48,14 +48,15 @@ func main() {
 func sendEpochMessage(ctx context.Context, producer sarama.SyncProducer, topic string) error {
 	log.Info("Server Start Producing")
 	var partitionProduced = cmap.New()
-	go func() error {
+	go func() {
 		for {
 			time.Sleep(time.Millisecond)
 			epochTime := strconv.FormatInt(time.Now().UnixNano()/int64(time.Millisecond), 10)
 			msg := prepareMessage(topic, epochTime)
 			partition, offset, err := producer.SendMessage(msg)
 			if err != nil {
-				return err
+				log.Info(err)
+				time.Sleep(1 * time.Second)
 			}
 			counter, _ := partitionProduced.Get(string(partition))
 			if counter == nil {

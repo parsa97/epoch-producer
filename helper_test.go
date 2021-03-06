@@ -29,6 +29,14 @@ func TestNewProducer(t *testing.T) {
 	}
 }
 
+func TestTCompressionLevel(t *testing.T) {
+	os.Setenv("PRODUCER_COMPRESSIONLEVEL", "zstd")
+	response := compressionLevel()
+	if response != 4 {
+		t.Error(response)
+	}
+}
+
 func TestRequiredAcks(t *testing.T) {
 	os.Setenv("PRODUCER_REQUIRED_ACKS", "-1")
 	response := saramaPartitioner()

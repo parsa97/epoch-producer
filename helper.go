@@ -82,13 +82,7 @@ func newProducer() (sarama.SyncProducer, error) {
 			config.Producer.Return.Errors = false
 		}
 	}
-	if value, ok := os.LookupEnv("PRODUCER_COMPRESSIONLEVEL"); ok {
-		valuei, err := strconv.Atoi(value)
-		if err != nil {
-			log.Error("Bad! PRODUCER_COMPRESSIONLEVEL: ", err)
-		}
-		config.Producer.CompressionLevel = valuei
-	}
+	config.Producer.CompressionLevel = compressionLevel()
 	if value, ok := os.LookupEnv("PRODUCER_CLIENTID"); ok {
 		config.ClientID = value
 	}
@@ -151,6 +145,29 @@ func saramaPartitioner() sarama.PartitionerConstructor {
 		}
 	}
 	return sarama.NewHashPartitioner
+}
+
+func compressionLevel() int {
+	if value, ok := os.LookupEnv("PRODUCER_COMPRESSIONLEVEL"); ok {
+		switch value {
+		case "lz4":
+			log.Debug("Compression level: lz4")
+			return int(sarama.CompressionLZ4)
+		case "snappy":
+			log.Debug("Compression level: snappy")
+			return int(sarama.CompressionSnappy)
+		case "gzip":
+			log.Debug("Compression level: gzip")
+			return int(sarama.CompressionGZIP)
+		case "zstd":
+			log.Debug("Compression level: zstd")
+			return int(sarama.CompressionZSTD)
+		default:
+			log.Debug("Compression level: none")
+			return int(sarama.CompressionLevelDefault)
+		}
+	}
+	return int(sarama.CompressionLevelDefault)
 }
 
 func logLevel() log.Level {
